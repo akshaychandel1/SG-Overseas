@@ -2,6 +2,12 @@
   "name": "broker-admin-frontend",
   "version": "1.0.0",
   "private": true,
+
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
+  },
+
   "dependencies": {
     "@kurkle/color": "^0.4.0",
     "axios": "^1.13.2",
