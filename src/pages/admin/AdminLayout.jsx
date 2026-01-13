@@ -292,7 +292,7 @@ export default function AdminLayout() {
           <div style={styles.logoIcon}>
             <BarChart2 color="white" size={18} />
           </div>
-          <h1 style={styles.logoText}>SG Overseas</h1>
+          <h1 style={styles.logoText}>Food Helper</h1>
           {isMobile && <X size={22} onClick={() => setIsSidebarOpen(false)} style={styles.closeMobile} />}
         </div>
 

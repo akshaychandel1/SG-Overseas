@@ -100,7 +100,7 @@ export default function Dashboard() {
         {/* 2. INVENTORY SUMMARY (Small slice of Inventory API) */}
         <div className="tm-card">
           <div className="tm-card-header">
-            <h3><Package size={18} /> Stock Alerts</h3>
+            <h4> Stock Alerts</h4>
             <span className="tm-link">View All</span>
           </div>
           <div className="tm-small-list">
@@ -117,7 +117,7 @@ export default function Dashboard() {
         {/* 3. CATEGORY OVERVIEW (Small slice of Categories API) */}
         <div className="tm-card">
           <div className="tm-card-header">
-            <h3><Layers size={18} /> Categories</h3>
+            <h4> Categories</h4>
             <span className="tm-link">Manage</span>
           </div>
           <div className="tm-small-list">
@@ -133,7 +133,7 @@ export default function Dashboard() {
         {/* 4. RECENT USERS (Small slice of Users API) */}
         <div className="tm-card">
           <div className="tm-card-header">
-            <h3><Users size={18} /> New Users</h3>
+            <h4> New Users</h4>
           </div>
           <div className="tm-user-grid">
             {data.users.slice(0, 4).map(u => (
@@ -152,7 +152,7 @@ export default function Dashboard() {
       {/* 5. PRICE ANALYTICS TREND (Small slice of Price API) */}
       <div className="tm-card tm-full-card">
         <div className="tm-card-header">
-          <h3><TrendingUp size={18} /> Value Trend (Inventory)</h3>
+          <h4> Value Trend (Inventory)</h4>
         </div>
         <div className="tm-chart-box">
           <Line

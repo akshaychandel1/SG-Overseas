@@ -247,7 +247,7 @@ export default function Login() {
         {/* RIGHT FORM SECTION - Mobile par ye full width ho jayega */}
         <div className="login-form-section">
           <div className="form-header">
-            <img src={logo} alt="SG Overseas" className="login-logo" />
+            <img src={logo} alt="Food Helper" className="login-logo" />
             <h3>Admin Login</h3>
             <p>Enter credentials to access dashboard</p>
           </div>
@@ -286,7 +286,7 @@ export default function Login() {
           </form>
 
           <footer className="form-footer">
-            © {new Date().getFullYear()} SG Overseas Group
+            © {new Date().getFullYear()} Food Helper Group
           </footer>
         </div>
       </div>
