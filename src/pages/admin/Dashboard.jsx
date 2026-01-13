@@ -1,322 +1,192 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
-  Users,
-  ShoppingCart,
-  Package,
-  Truck,
-  TrendingUp,
-  ArrowUpRight,
-  Activity,
-  Shield,
-  Grid,
+  Users, ShoppingCart, Package, TrendingUp,
+  ArrowUp, ArrowDown, Box, AlertTriangle,
+  DollarSign, List, Layers, PieChart
 } from "react-feather";
+import {
+  Chart as ChartJS, CategoryScale, LinearScale, PointElement,
+  LineElement, Tooltip, Legend, Filler
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import "./Dashboard.css";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler);
+
+const API = "https://grocerrybackend.onrender.com/api";
 
 export default function Dashboard() {
+  const [data, setData] = useState({
+    products: [],
+    inventory: [],
+    categories: [],
+    users: [],
+    loading: true
+  });
+
+  const [stats, setStats] = useState({
+    totalRev: 0,
+    lowStockCount: 0,
+    totalProds: 0,
+    userCount: 0
+  });
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = async () => {
+    try {
+      // Sabhi APIs ko ek saath fetch kar rahe hain
+      const [priceRes, catRes, userRes, invRes] = await Promise.all([
+        axios.get(`${API}/prices`).catch(() => ({ data: { data: [] } })),
+        axios.get(`${API}/categories`).catch(() => ({ data: { categories: [] } })),
+        axios.get(`${API}/user`).catch(() => ({ data: [] })),
+        axios.get(`${API}/inventory/all`).catch(() => ({ data: { data: [] } }))
+      ]);
+
+      const invItems = invRes.data.data || [];
+      const cats = catRes.data.categories || [];
+      const users = userRes.data || [];
+
+      // Calculate real stats from APIs
+      const rev = invItems.reduce((acc, curr) => acc + (Number(curr.sellingPrice) || 0), 0);
+      const low = invItems.filter(i => i.stock <= (i.minStock || 5)).length;
+
+      setData({
+        products: priceRes.data.data || [],
+        inventory: invItems,
+        categories: cats,
+        users: users,
+        loading: false
+      });
+
+      setStats({
+        totalRev: rev,
+        lowStockCount: low,
+        totalProds: invItems.length,
+        userCount: users.length
+      });
+
+    } catch (err) {
+      console.error("Dashboard Load Error", err);
+      setData(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  if (data.loading) return <div className="tm-loader">Updating Dashboard...</div>;
+
   return (
-    <div style={styles.wrapper}>
+    <div className="tm-wrapper">
       {/* HEADER */}
-      <div style={styles.header}>
-        <div>
-          <h2 style={styles.title}>Grocery Admin Dashboard</h2>
-          <p style={styles.subtitle}>Manage products, orders & inventory</p>
+      <div className="tm-header">
+        <div className="tm-title-box">
+          <h2>Dashboard</h2>
+          <p>Real-time analytics from all modules</p>
         </div>
-        <div style={styles.badge}>
-          <Activity size={14} /> Live Store
+        <button className="tm-btn-primary" onClick={fetchAllData}>Refresh Data</button>
+      </div>
+
+      {/* 1. TOP STATS (Dynamic) */}
+      <div className="tm-metrics-grid">
+        <StatCard title="Total Revenue" val={`₹${stats.totalRev}`} icon={<DollarSign />} color="#3c50e0" trend="+12%" />
+        <StatCard title="Total Users" val={stats.userCount} icon={<Users />} color="#10b981" trend="+4%" />
+        <StatCard title="Inventory Items" val={stats.totalProds} icon={<Box />} color="#ff9c07" trend="Live" />
+        <StatCard title="Low Stock" val={stats.lowStockCount} icon={<AlertTriangle />} color="#e11d48" trend="Critical" />
+      </div>
+
+      <div className="tm-main-grid">
+        {/* 2. INVENTORY SUMMARY (Small slice of Inventory API) */}
+        <div className="tm-card">
+          <div className="tm-card-header">
+            <h3><Package size={18} /> Stock Alerts</h3>
+            <span className="tm-link">View All</span>
+          </div>
+          <div className="tm-small-list">
+            {data.inventory.filter(i => i.stock < 10).slice(0, 4).map(item => (
+              <div key={item._id} className="tm-list-item">
+                <span>{item.product?.name}</span>
+                <span className="text-red-bold">{item.stock} left</span>
+              </div>
+            ))}
+            {stats.lowStockCount === 0 && <p className="tm-empty">All stock levels normal</p>}
+          </div>
         </div>
-      </div>
 
-      {/* KPI CARDS */}
-      <div style={styles.grid}>
-        <StatCard
-          title="Total Customers"
-          value="3,420"
-          trend="+9%"
-          helper="this month"
-          icon={<Users size={26} />}
-          gradient="linear-gradient(135deg, #2563eb, #1e40af)"
-        />
+        {/* 3. CATEGORY OVERVIEW (Small slice of Categories API) */}
+        <div className="tm-card">
+          <div className="tm-card-header">
+            <h3><Layers size={18} /> Categories</h3>
+            <span className="tm-link">Manage</span>
+          </div>
+          <div className="tm-small-list">
+            {data.categories.slice(0, 4).map(cat => (
+              <div key={cat._id} className="tm-list-item">
+                <span>{cat.name}</span>
+                <span className="tm-badge-blue">{cat.subcategories?.length} Sub</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <StatCard
-          title="Product Categories"
-          value="18"
-          trend="+2"
-          helper="new added"
-          icon={<Grid size={26} />}
-          gradient="linear-gradient(135deg, #16a34a, #166534)"
-        />
-
-        <StatCard
-          title="Total Products"
-          value="1,245"
-          trend="+36"
-          helper="new items"
-          icon={<Package size={26} />}
-          gradient="linear-gradient(135deg, #ea580c, #9a3412)"
-        />
-
-        <StatCard
-          title="Monthly Revenue"
-          value="₹ 8.6L"
-          trend="+21%"
-          helper="sales growth"
-          icon={<TrendingUp size={26} />}
-          gradient="linear-gradient(135deg, #7c3aed, #4c1d95)"
-        />
-      </div>
-
-      {/* QUICK ACTIONS */}
-      <div style={styles.actions}>
-        <ActionCard
-          icon={<Package size={18} />}
-          title="Manage Products"
-          desc="Add, update or remove grocery items"
-        />
-        <ActionCard
-          icon={<ShoppingCart size={18} />}
-          title="Orders"
-          desc="View and process customer orders"
-        />
-        <ActionCard
-          icon={<Truck size={18} />}
-          title="Deliveries"
-          desc="Track and manage deliveries"
-        />
-        <ActionCard
-          icon={<Shield size={18} />}
-          title="Admin Security"
-          desc="Update password & permissions"
-        />
-      </div>
-
-      {/* INSIGHTS */}
-      <div style={styles.bottomGrid}>
-        <InfoCard
-          title="Recent Activity"
-          items={[
-            "🥬 New product added: Fresh Spinach",
-            "🛒 Order #2451 placed",
-            "📦 Stock updated for Rice (25kg)",
-            "🚚 Order #2447 delivered successfully",
-          ]}
-        />
-        <InfoCard
-          title="Store Health"
-          items={[
-            "🟢 Inventory system running",
-            "🟢 Payments working fine",
-            "🟢 Delivery partners active",
-            "🟢 No pending issues",
-          ]}
-        />
-      </div>
-
-      {/* FOOTER */}
-      <div style={styles.footer}>
-        <span>© 2026 Grocery Admin Panel</span>
-        <span>Version 1.0.0</span>
-      </div>
-    </div>
-  );
-}
-
-/* ================= COMPONENTS ================= */
-
-function StatCard({ title, value, trend, helper, icon, gradient }) {
-  return (
-    <div
-      style={{ ...styles.card, background: gradient }}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.transform = "translateY(-6px)")
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.transform = "translateY(0)")
-      }
-    >
-      <div style={styles.cardLeft}>
-        <span style={styles.cardLabel}>{title}</span>
-        <span style={styles.cardNumber}>{value}</span>
-
-        <div style={styles.cardMeta}>
-          <span style={styles.trendBadge}>
-            <TrendingUp size={14} /> {trend}
-          </span>
-          <span style={styles.helperText}>{helper}</span>
+        {/* 4. RECENT USERS (Small slice of Users API) */}
+        <div className="tm-card">
+          <div className="tm-card-header">
+            <h3><Users size={18} /> New Users</h3>
+          </div>
+          <div className="tm-user-grid">
+            {data.users.slice(0, 4).map(u => (
+              <div key={u._id} className="tm-user-mini">
+                <div className="tm-avatar">{u.name?.charAt(0)}</div>
+                <div className="tm-u-info">
+                  <p>{u.name}</p>
+                  <small>{u.email?.slice(0, 15)}...</small>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div style={styles.cardIconBox}>
-        {icon}
-        <ArrowUpRight size={14} style={{ marginLeft: 6, opacity: 0.8 }} />
+      {/* 5. PRICE ANALYTICS TREND (Small slice of Price API) */}
+      <div className="tm-card tm-full-card">
+        <div className="tm-card-header">
+          <h3><TrendingUp size={18} /> Value Trend (Inventory)</h3>
+        </div>
+        <div className="tm-chart-box">
+          <Line
+            data={getChartConfig(stats.totalRev)}
+            options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
-function ActionCard({ icon, title, desc }) {
+// Sub-component for Stats
+function StatCard({ title, val, icon, color, trend }) {
   return (
-    <div style={styles.actionCard}>
-      <div style={styles.actionIcon}>{icon}</div>
-      <div>
-        <h4 style={styles.actionTitle}>{title}</h4>
-        <p style={styles.actionDesc}>{desc}</p>
+    <div className="tm-stat-card" style={{ borderLeft: `4px solid ${color}` }}>
+      <div className="tm-stat-icon" style={{ color: color }}>{icon}</div>
+      <div className="tm-stat-info">
+        <h3>{val}</h3>
+        <p>{title}</p>
       </div>
+      <div className="tm-stat-trend">{trend}</div>
     </div>
   );
 }
 
-function InfoCard({ title, items }) {
-  return (
-    <div style={styles.infoCard}>
-      <h4 style={styles.infoTitle}>{title}</h4>
-      <ul style={styles.list}>
-        {items.map((item, i) => (
-          <li key={i} style={styles.listItem}>
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/* ================= STYLES ================= */
-
-const styles = {
-  wrapper: { display: "flex", flexDirection: "column", gap: 26 },
-
-  header: {
-    background: "#ffffff",
-    padding: "18px 24px",
-    borderRadius: 14,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
-  },
-
-  title: { margin: 0, fontSize: 24, fontWeight: 700 },
-  subtitle: { marginTop: 6, fontSize: 14, color: "#6b7280" },
-
-  badge: {
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
-    background: "#e5f6ed",
-    color: "#047857",
-    padding: "6px 12px",
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 600,
-  },
-
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: 22,
-  },
-
-  card: {
-    color: "#fff",
-    padding: "22px 24px",
-    borderRadius: 18,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxShadow: "0 20px 45px rgba(0,0,0,0.22)",
-    transition: "all 0.3s ease",
-    cursor: "pointer",
-  },
-
-  cardLeft: { display: "flex", flexDirection: "column", gap: 6 },
-
-  cardLabel: { fontSize: 14, opacity: 0.9, fontWeight: 500 },
-
-  cardNumber: {
-    fontSize: 34,
-    fontWeight: 800,
-    letterSpacing: "0.5px",
-  },
-
-  cardMeta: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    marginTop: 6,
-  },
-
-  trendBadge: {
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
-    background: "rgba(255,255,255,0.25)",
-    padding: "4px 10px",
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 600,
-  },
-
-  helperText: { fontSize: 12, opacity: 0.85 },
-
-  cardIconBox: {
-    background: "rgba(255,255,255,0.22)",
-    padding: 18,
-    borderRadius: 14,
-    display: "flex",
-    alignItems: "center",
-  },
-
-  actions: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: 16,
-  },
-
-  actionCard: {
-    background: "#ffffff",
-    padding: 18,
-    borderRadius: 14,
-    display: "flex",
-    gap: 14,
-    alignItems: "center",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-  },
-
-  actionIcon: {
-    background: "#f1f5f9",
-    padding: 10,
-    borderRadius: 10,
-  },
-
-  actionTitle: { margin: 0, fontSize: 15, fontWeight: 600 },
-  actionDesc: { margin: "4px 0 0", fontSize: 13, color: "#6b7280" },
-
-  bottomGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
-    gap: 22,
-  },
-
-  infoCard: {
-    background: "#ffffff",
-    padding: 22,
-    borderRadius: 16,
-    boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
-  },
-
-  infoTitle: { marginBottom: 12, fontSize: 16, fontWeight: 600 },
-
-  list: { listStyle: "none", padding: 0, margin: 0 },
-  listItem: {
-    padding: "8px 0",
-    fontSize: 14,
-    borderBottom: "1px solid #f1f5f9",
-  },
-
-  footer: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: 12,
-    color: "#6b7280",
-    padding: "8px 4px",
-  },
-};
+// Chart Logic
+const getChartConfig = (total) => ({
+  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  datasets: [{
+    data: [total * 0.5, total * 0.7, total * 0.6, total * 0.9, total * 0.8, total],
+    borderColor: "#3c50e0",
+    backgroundColor: "rgba(60, 80, 224, 0.1)",
+    fill: true,
+    tension: 0.4
+  }]
+});

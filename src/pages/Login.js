@@ -151,32 +151,54 @@
 //   );
 // }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock, LogIn, Globe, ShieldCheck, Ship } from "lucide-react";
 import "./Login.css";
-import loginImg from "../assets/WhatsApp Image 2025-12-05 at 13.19.29_68ae0406.jpg";
+import logo from "../assets/WhatsApp Image 2025-12-05 at 13.19.29_68ae0406.jpg"; // Apna logo yahan check kar lena
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post("https://grocerrybackend.onrender.com/api/admin/login", {
         email,
         password,
       });
 
-      if (!res.data || !res.data.token) {
-        alert("Login failed: Invalid response from server");
-        return;
-      }
-
-      if (res.data.role !== "admin") {
-        alert("Access Denied — only admin can login here");
+      if (res.data?.role !== "admin") {
+        alert("Access Denied — Admin only");
         return;
       }
 
@@ -187,54 +209,85 @@ export default function Login() {
       navigate("/admin/pricelist", { replace: true });
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-wrapper">
-      {/* LEFT IMAGE SECTION */}
-      <div className="login-left">
-        <img src={loginImg} alt="Login Visual" className="login-image" />
-      </div>
+    <div className="login-container">
+      <div className="login-card">
+        {/* LEFT BRAND SECTION - Desktop par dikhega, Mobile par hide ho jayega */}
+        <div className="login-brand-section">
+          <div className="brand-content">
+            <div className="brand-badge">Official Admin Portal</div>
+            <h2 className="brand-title">SG Overseas</h2>
+            <p className="brand-description">
+              A premier leader in global grocery exports. Managing international
+              trade and logistics with precision and excellence.
+            </p>
 
-      {/* RIGHT FORM SECTION */}
-      <div className="login-right">
-        <div className="login-box">
+            <div className="brand-features">
+              <div className="feature">
+                <Globe size={20} className="f-icon" />
+                <span>Global Export Network</span>
+              </div>
+              <div className="feature">
+                <ShieldCheck size={20} className="f-icon" />
+                <span>Quality Standards</span>
+              </div>
+              <div className="feature">
+                <Ship size={20} className="f-icon" />
+                <span>Swift Logistics</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <h2 className="login-title">Welcome Back 👋</h2>
-          <p className="login-subtitle">Admin Portal Access</p>
+        {/* RIGHT FORM SECTION - Mobile par ye full width ho jayega */}
+        <div className="login-form-section">
+          <div className="form-header">
+            <img src={logo} alt="SG Overseas" className="login-logo" />
+            <h3>Admin Login</h3>
+            <p>Enter credentials to access dashboard</p>
+          </div>
 
-          <form onSubmit={submit} className="login-form">
-
-            <div className="input-group">
-              <label>Email</label>
+          <form onSubmit={submit} className="modern-form">
+            <div className="input-field">
+              <Mail className="input-icon" size={20} />
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
 
-            <div className="input-group">
-              <label>Password</label>
+            <div className="input-field">
+              <Lock className="input-icon" size={20} />
               <input
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
 
-            <button className="login-btn">Login</button>
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? "Verifying..." : (
+                <>
+                  <span>Login Now</span>
+                  <LogIn size={18} />
+                </>
+              )}
+            </button>
           </form>
 
-          <p className="signup-text">
-            Don’t have an account? <Link to="/signup">Sign Up</Link>
-          </p>
-
+          <footer className="form-footer">
+            © {new Date().getFullYear()} SG Overseas Group
+          </footer>
         </div>
       </div>
     </div>

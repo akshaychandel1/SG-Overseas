@@ -17,6 +17,11 @@ import CategoryList from "./pages/admin/CategoryList";
 import DescriptionManager from "./pages/admin/DescriptionManager";
 import HistoryList from "../src/pages/admin/HistoryList";
 import AdminUpdatePassword from "./pages/admin/AdminUpdatePassword";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminGST from "./pages/admin/AdminGST";
+import AdminInventory from "./pages/admin/AdminInventory";
+import "./index.css";
 
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -44,7 +49,9 @@ export default function App() {
           <Route path="users" element={<Users />} />
           <Route path="brokers" element={<Brokers />} />
           <Route path="transactions" element={<Transactions />} />
+          <Route path="payments" element={<AdminPayments />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="orders" element={<AdminOrders />} />
           <Route path="CategoryManager" element={<CategoryManager />} />
           <Route path="pricelist" element={<PriceList />} />
           <Route path="productlist" element={<ProductList />} />
@@ -53,7 +60,9 @@ export default function App() {
           <Route path="descriptionmanager" element={<DescriptionManager />} />
           <Route path="historylist" element={<HistoryList />} />
           <Route path="update-password" element={<AdminUpdatePassword />} />
-          
+          <Route path="/admin/gst" element={<AdminGST />} />
+          <Route path="inventory" element={<AdminInventory />} />
+
 
         </Route>
       </Routes>

@@ -1,170 +1,131 @@
-/* -------- FILTER ROW ALWAYS SAME LINE -------- */
-.filter-section {
-  display: flex;
-  flex-wrap: nowrap !important;     /* NEVER wrap */
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-/* Dropdown Styling */
-.filter-section select,
-.filter-section input[type="date"] {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #cfd8e3;
+/* Container styling to match TailAdmin Cards */
+.tm-analytics-wrapper {
   background: #ffffff;
-  font-size: 14px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  width: 160px;
-}
-
-/* -------- MOBILE VIEW (3 FILTERS EXACT 1 ROW) -------- */
-@media (max-width: 768px) {
-  .filter-section {
-    flex-wrap: nowrap !important;  
-    overflow-x: auto !important;   /* mobile horizontal scroll if required */
-    gap: 10px;
-  }
-
-  .filter-section select,
-  .filter-section input[type="date"] {
-    width: 150px !important;
-  }
-}
-
-
-.analytics-container {
-  max-width: 1200px;
- text-align: left;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05);
   font-family: "Inter", sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.analytics-title {
-  font-size: 21px;
-  font-weight: 700;
-  text-align: left;
-  color: #dc3545;
-  text-align: center;
-  margin-bottom: 5px;
-}
-.analytics-container h2{
-  text-align: left;
-}
-
-.analytics-subtitle {
-  text-align: center;
-  color: #6c757d;
-  margin-bottom: 25px;
-}
-
-
-
-.filter-group {
+/* Header with Title and Filters */
+.tm-card-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: flex-start;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 16px;
 }
 
-.filter-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 4px;
+.tm-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1c2434;
+  margin: 0;
 }
 
-.filter-group select,
-.filter-group input {
-  padding: 7px 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.tm-card-subtitle {
   font-size: 14px;
-  background: #fff;
+  color: #64748b;
+  margin-top: 4px;
 }
 
-.btn.refresh {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 9px 16px;
-  font-weight: 600;
+/* Filter Row - Optimized for Mobile & Desktop */
+.tm-filter-section {
+  display: flex;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.tm-select-wrapper select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #1c2434;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: 0.2s;
+  outline: none;
+  min-width: 140px;
+  transition: all 0.2s ease;
 }
 
-.btn.refresh:hover {
-  background: #0056b3;
+.tm-select-wrapper select:focus {
+  border-color: #3c50e0;
+  background-color: #fff;
 }
 
-.chart-wrapper {
-  height: 480px;
+/* Chart Canvas Wrapper */
+.tm-chart-container {
+  height: 420px;
+  width: 100%;
   position: relative;
 }
 
-.loading,
-.no-data {
-  text-align: center;
-  font-weight: 500;
-  color: #6c757d;
-  margin-top: 50px;
-}
-/* -------- FILTER ROW ALWAYS SAME LINE -------- */
-.filter-section {
-  display: flex;
-  flex-wrap: nowrap !important;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
+.tm-canvas-wrapper {
+  height: 100%;
   width: 100%;
 }
 
-/* Normal desktop size */
-.filter-section select,
-.filter-section input[type="date"] {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #cfd8e3;
-  background: #ffffff;
-  font-size: 14px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  width: 150px;   /* desktop perfect */
+/* Loading & Empty States */
+.tm-loading-state,
+.tm-no-data {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 16px;
 }
 
-/* -------- MOBILE VIEW (compact width) -------- */
-@media (max-width: 768px) {
-  .filter-section {
-    flex-wrap: nowrap !important;
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    gap: 8px;
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3c50e0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
 
-  /* 👇 Choti width for perfect one-line */
-  .filter-section select,
-  .filter-section input[type="date"] {
-    width: 105px !important;    /* ★ PERFECT mobile width */
-    padding: 8px 10px !important;
-    font-size: 12px !important;
+  100% {
+    transform: rotate(360deg);
   }
 }
 
-
-/* Responsive */
+/* Responsive Mobile Adjustments */
 @media (max-width: 768px) {
-  .filter-section {
-    flex-direction: row;
-    align-items: stretch;
+  .tm-analytics-wrapper {
+    padding: 16px;
   }
 
-  .chart-wrapper {
-    height: 380px;
+  .tm-card-header {
+    flex-direction: column;
+    gap: 16px;
   }
 
-  .analytics-title {
-    font-size: 24px;
+  .tm-filter-section {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+
+  .tm-select-wrapper select {
+    min-width: 120px;
+    font-size: 12px;
+  }
+
+  .tm-chart-container {
+    height: 300px;
   }
 }
