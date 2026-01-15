@@ -429,7 +429,7 @@ export default function PriceAnalytics() {
   }, [selectedProduct, selectedCategory]);
 
   return (
-    <div className="tm-analytics-wrapper">
+    <div className="tm-analytics-wrapper m-4">
       {/* Title Bar like TailAdmin Card Header */}
       <div className="tm-card-header">
         <div className="tm-header-left">

@@ -1483,17 +1483,23 @@ const CategoryManager = () => {
       <ToastContainer position="top-right" />
 
       {/* Header Section */}
-      <div className="tm-header">
-        <div className="tm-title-box">
-          <h2>Category Manager</h2>
-          <p>Organize and manage your product hierarchy</p>
+       <div className="flex flex-row justify-between items-center gap-2 mb-3 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2">
+          <h2 className="text-[13px] md:text-xl font-bold text-slate-800 uppercase tracking-tighter">
+           Delivery Partners
+          </h2>
         </div>
-        <button className="tm-btn-primary" onClick={() => setShowCatForm(!showCatForm)}>
-          {showCatForm ? <X size={18} /> : <Plus size={18} />}
-          <span>{showCatForm ? "Close" : "Add Category"}</span>
+        <button
+          onClick={() => {
+            setEditId(null);
+            setForm(empty);
+            setShow(true);
+          }}
+          className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-[10px] md:text-sm font-bold shadow-md active:scale-95 transition-all"
+        >
+          <Plus size={14} /> <span className="hidden xs:inline">Add Rider</span><span className="xs:hidden">Add</span>
         </button>
       </div>
-
       {/* Add Category Form (Inline) */}
       {showCatForm && (
         <div className="tm-card tm-form-card">

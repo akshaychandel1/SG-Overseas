@@ -221,7 +221,7 @@ export default function Login() {
         <div className="login-brand-section">
           <div className="brand-content">
             <div className="brand-badge">Official Admin Portal</div>
-            <h2 className="brand-title">SG Overseas</h2>
+            <h2 className="brand-title">FOOD HELPER</h2>
             <p className="brand-description">
               A premier leader in global grocery exports. Managing international
               trade and logistics with precision and excellence.
@@ -247,9 +247,9 @@ export default function Login() {
         {/* RIGHT FORM SECTION - Mobile par ye full width ho jayega */}
         <div className="login-form-section">
           <div className="form-header">
-            <img src={logo} alt="Food Helper" className="login-logo" />
-            <h3>Admin Login</h3>
-            <p>Enter credentials to access dashboard</p>
+            {/* <img src={logo} alt="Food Helper" className="login-logo" /> */}
+            <h3>Food Helper Login</h3>
+            {/* <p>Enter credentials to access dashboard</p> */}
           </div>
 
           <form onSubmit={submit} className="modern-form">

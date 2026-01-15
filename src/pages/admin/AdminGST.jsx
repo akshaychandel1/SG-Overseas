@@ -348,8 +348,7 @@ export default function AdminGST() {
       {/* Page Header Like TailAdmin */}
       <div className="tm-gst-header">
         <h2 className="tm-gst-title">GST & Discount Manager</h2>
-        <p className="tm-gst-subtitle">Configure tax rules and quantity-based discounts</p>
-      </div>
+        </div>
 
       <div className="tm-gst-grid">
         {/* LEFT SIDE: FORM CONTROLS */}
@@ -439,7 +438,7 @@ export default function AdminGST() {
         {/* RIGHT SIDE: DATA TABLES */}
         <div className="tm-gst-table-col">
 
-          <div className="tm-gst-card">
+          <div className="tm-gst-card px-2">
             <div className="tm-gst-card-head"><h3>Current GST Rules</h3></div>
             <div className="tm-gst-scroll">
               <table className="tm-gst-table">
@@ -460,8 +459,8 @@ export default function AdminGST() {
             </div>
           </div>
 
-          <div className="tm-gst-card">
-            <div className="tm-gst-card-head"><h3>Bulk Discount Rules</h3></div>
+          <div className="tm-gst-card px-2">
+            <div className="tm-gst-card-head "><h3>Bulk Discount Rules</h3></div>
             <div className="tm-gst-scroll">
               <table className="tm-gst-table">
                 <thead>
